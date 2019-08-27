@@ -19,6 +19,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('login', 'API\UserController@login');
 Route::post('register', 'API\UserController@register');
-Route::post('tweet', 'TweetController@store');
-Route::get('tweet/{id}', 'TweetController@show');
-Route::delete('tweet/{id}', 'TweetController@destroy');
+
+Route::group(['middleware' => 'auth:api'], function() {
+	Route::post('tweet', 'TweetController@store');
+	Route::get('tweet/{id}', 'TweetController@show');
+	Route::delete('tweet/{id}', 'TweetController@destroy');
+});

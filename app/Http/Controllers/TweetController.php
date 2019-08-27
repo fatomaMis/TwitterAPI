@@ -27,17 +27,18 @@ class TweetController extends Controller
      */
     public function store(Request $request)
     {
+
         $tweet_text = $request->input('tweet_text');
         $user = Auth::user();
+        // dd($user);
         $tweet = new Tweet;
 
         $tweet->tweet_text =$tweet_text;
         $tweet->user_id = $user->id;
-        $tweet->user_screen_name = $request->input('user_screen_name');
+        $tweet->user_screen_name = $user->name;
 
         $tweet->save();
         return new TweetResource($tweet);
-
     }
 
     /**
