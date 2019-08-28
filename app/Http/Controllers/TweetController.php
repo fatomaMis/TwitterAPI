@@ -30,7 +30,6 @@ class TweetController extends Controller
 
         $tweet_text = $request->input('tweet_text');
         $user = Auth::user();
-        // dd($user);
         $tweet = new Tweet;
 
         $tweet->tweet_text =$tweet_text;
