@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateActionLogTable extends Migration
+class CreateFollowTweetTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,18 @@ class CreateActionLogTable extends Migration
      */
     public function up()
     {
-        Schema::create('action_log', function (Blueprint $table) {
-            $table->integer('follower_id')->unsigned();
-            $table->integer('following_id')->unsigned();
-            $table->primary(array('follower_id', 'following_id'));
-
+        Schema::create('follow_tweet', function (Blueprint $table) {
+            $table->integer('user_id')->unsigned();
+            $table->integer('tweet_id')->unsigned();
+            $table->primary(array('user_id', 'tweet_id'));
         });
 
-        Schema::table('action_log', function($table) {
-            $table->foreign('follower_id')->references('id')->on('users')
+        Schema::table('follow_tweet', function($table) {
+            $table->foreign('user_id')->references('id')->on('users')
                 ->onDelete('restrict')
                 ->onUpdate('restrict');
 
-            $table->foreign('following_id')->references('id')->on('users')
+            $table->foreign('tweet_id')->references('id')->on('tweets')
                 ->onDelete('restrict')
                 ->onUpdate('restrict');
         });
@@ -38,6 +37,6 @@ class CreateActionLogTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('action_log');
+        Schema::dropIfExists('follow_tweet');
     }
 }

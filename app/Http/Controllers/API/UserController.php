@@ -5,7 +5,8 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller; 
 use App\User; 
-use Illuminate\Support\Facades\Auth; 
+use Auth;
+// use Illuminate\Support\Facades\Auth; 
 use Validator;
 
 class UserController extends Controller
@@ -53,41 +54,36 @@ class UserController extends Controller
 	return response()->json(['success'=>$success], $this-> successStatus); 
     }
 
-    //follow and unfollow users
-    
-    public function follow(){
-    $id = Auth::id();
-    $result = User::where('id', '!=', $id)->get();
-    //return $result;
-    return response()->json(['data' => $result], 200,[],JSON_NUMERIC_CHECK);
-	}
 
-	public function followUser(User $user){
-    if (!Auth::user()->isFollowing($user_id)){
-        Auth::user()->follows()->create([
-          'target_id' =>$user_id,
-        ]);
+    /** 
+     * Follow and Unfollow action api 
+     * 
+     * @return \Illuminate\Http\Response 
+     */ 
+     public function action($id, Request $request)
+{
+	$user = User::where('id', $id)->first();
+	$token = Auth::user();
 
-        return response()->json(['sucess'=>'sucessfully followed']);
-     }else{
-        return response()->json(['oops'=>'u already followed ']);
-     }
-	}
-
-	public function unfollowUser(User $user)
-	{
-    if (Auth::user()->isFollowing($user->id)) {
-        $follow = Auth::user()->follows()->where('target_id', $user->id)->first();
-        $follow->delete();
-
-        return response()->json(['success', 'You are no longer friends with '. $user->name]);
-    } else {
-        return response()->json(['error', 'You are not following this person']);
+    switch ($request->get('act')) {
+        case "follow":
+            $user->following()->attach($token->$id);
+            return response()->json(['success', 'You are no longer friends with '. $token->name]);
+            break;
+        case "unfollow":
+            $user->following()->detach($token->$id);
+            return response()->json(['error', 'You are not following this person']);
+            break;
+        default:
+        	return response()->json(['error', 'wrong action']);
     }
-  }
-
-
 }
 
-    
+
+  public function getTweets(){
+  	$user = User::with('followers.tweets')->find(1); 
+  	$user->tweets();
+  }
+
+   
 }

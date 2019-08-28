@@ -26,5 +26,8 @@ Route::group(['middleware' => 'auth:api'], function() {
 	Route::delete('tweet/{id}', 'TweetController@destroy');
 });
 
-Route::post('/followUser/{user}','API\UserController@followUser');
-Route::get('/unfollowUser/{user}','API\UserController@unfollowUser');
+Route::group(['middleware' => 'auth:api'], function() {
+Route::post('users/{id}/action', 'API\UserController@action');
+});
+
+Route::get('getTweets','API\UserController@getTweets');
